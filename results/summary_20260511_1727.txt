@@ -1,0 +1,25 @@
+Benchmark MAD 2025/2026 -- 20260511_1727
+
+
+============================================================
+Ficheiro: inst_small.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 3.0  tempo: 0.0ms  
+  Greedy Por Grau                 guardas: 3.2  tempo: 0.0ms  
+  Greedy Aleatorio x30            guardas: 2.6  tempo: 0.5ms  
+  Programacao Dinamica            guardas: 3.0  tempo: 0.3ms  
+
+============================================================
+Ficheiro: inst_1d.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 6.6  tempo: 0.0ms  
+  Greedy Por Grau                 guardas: 10.6  tempo: 0.0ms  
+  Greedy Aleatorio x30            guardas: 6.0  tempo: 1.8ms  
+  Programacao Dinamica            guardas: 6.0  tempo: 0.0ms  
+
+============================================================
+Ficheiro: inst_grid.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 3.5  tempo: 0.0ms  
+  Greedy Por Grau                 guardas: 5.7  tempo: 0.0ms  
+  Greedy Aleatorio x30            guardas: 3.5  tempo: 1.0ms  

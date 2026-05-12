@@ -30,7 +30,7 @@ solve(Rectangles, NVerts, Guards, Cost) :-
     sum(Guards, #=, Cost),
 
     % --- Labeling com minimização ---
-    labeling([minimize(Cost), ff, bisect], Guards).
+    labeling([min(Cost), ff, bisect], Guards).
 
 
 /*-------------------------------------------------------------
@@ -115,7 +115,7 @@ solve_partial(Rectangles, NVerts, TargetIdxs, Guards, Cost) :-
     Guards ins 0..1,
     maplist(partial_constraint(Guards, Rectangles), TargetIdxs),
     sum(Guards, #=, Cost),
-    labeling([minimize(Cost), ff, bisect], Guards).
+    labeling([min(Cost), ff, bisect], Guards).
 
 partial_constraint(Guards, Rectangles, RIdx) :-
     nth0(RIdx, Rectangles, Corners),

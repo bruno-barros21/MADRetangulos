@@ -1,0 +1,16 @@
+ficheiro,instancia,n_rects,n_verts,opt_ILP,Greedy_MaxCov_n,Greedy_MaxCov_ms,Greedy_MaxCov_gap,Greedy_Grau_n,Greedy_Grau_ms,Greedy_Grau_gap,Greedy_Aleat_n,Greedy_Aleat_ms,Greedy_Aleat_gap,MAC_n,MAC_ms,MAC_nodes,MAC_gap,DP_n,DP_ms,DP_method,DP_optimo,DP_gap,ILP_n,ILP_ms,CPSAT_n,CPSAT_ms,CPSAT_gap,Prolog_n,Prolog_ms,Prolog_status
+inst_medium.txt,1,10,18,3,3,0.033,0,4,0.335,1,3,0.723,0,,,,,,0.452,DP-ROW (profile),True,,3,214.021,3,1112.032,0,3,16.0,ok
+inst_medium.txt,2,12,20,4,5,0.034,1,6,0.011,2,4,1.045,0,,,,,,0.803,DP-ROW (profile),True,,4,8.727,4,33.124,0,4,,ok
+inst_medium.txt,3,12,21,3,3,0.04,0,5,0.014,2,3,1.17,0,,,,,,0.803,DP-COL (profile),True,,3,11.924,3,15.522,0,3,16.0,ok
+inst_medium.txt,4,12,21,3,3,0.034,0,5,0.011,2,3,1.386,0,,,,,,0.371,DP-ROW (profile),True,,3,9.471,3,15.834,0,3,,ok
+inst_medium.txt,5,14,24,4,4,0.037,0,6,0.015,2,4,1.271,0,,,,,,0.686,DP-ROW (profile),True,,4,9.348,4,17.635,0,4,31.0,ok
+inst_medium.txt,6,18,28,6,7,0.053,1,10,0.014,4,6,2.61,0,,,,,,1.243,DP-ROW (profile),True,,6,9.357,6,16.901,0,6,266.0,ok
+inst_medium.txt,7,15,24,6,6,0.066,0,8,0.017,2,6,2.478,0,,,,,,1.631,DP-ROW (profile),True,,6,11.286,6,13.42,0,6,203.0,ok
+inst_medium.txt,8,20,30,6,6,0.088,0,12,0.018,6,6,4.435,0,,,,,,5.98,DP-COL (profile),True,,6,11.089,6,12.131,0,6,281.0,ok
+inst_medium.txt,9,24,36,8,9,0.115,1,14,0.023,6,8,6.222,0,skip,skip,skip,,,2.608,DP-COL (profile),True,,8,11.812,8,9.519,0,,,skip (n>20)
+inst_medium.txt,10,20,30,6,6,0.091,0,12,0.036,6,6,3.937,0,,,,,,5.159,DP-ROW (profile),True,,6,11.38,6,12.205,0,6,266.0,ok
+inst_large.txt,1,28,40,8,8,0.144,0,18,0.028,10,8,6.777,0,skip,skip,skip,,,7.705,DP-COL (profile),True,,8,12.49,8,24.592,0,,,skip (n>20)
+inst_large.txt,2,32,45,8,9,0.174,1,21,0.032,13,9,9.109,1,skip,skip,skip,,,10.062,DP-COL (profile),True,,8,12.781,8,16.544,0,,,skip (n>20)
+inst_large.txt,3,40,54,12,15,0.327,3,28,0.041,16,12,13.128,0,skip,skip,skip,,,33.975,DP-ROW (profile),True,,12,12.07,12,25.08,0,,,skip (n>20)
+inst_large.txt,4,56,72,16,19,0.358,3,42,0.044,26,16,19.478,0,skip,skip,skip,,,448.023,DP-COL (profile),True,,16,12.612,16,25.673,0,,,skip (n>20)
+inst_large.txt,5,63,80,20,20,0.624,0,48,0.06,28,20,29.116,0,skip,skip,skip,,,503.583,DP-COL (profile),True,,20,14.659,20,19.805,0,,,skip (n>20)

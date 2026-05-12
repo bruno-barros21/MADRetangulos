@@ -245,7 +245,7 @@ class Solver:
         Lança o backtracking com MAC sobre o CSP.
         Devolve a solução óptima (mínimo de guardas).
         """
-        initial_domains = csp.clone_domains(self.csp.domains)
+        initial_domains = self.csp.clone_domains(self.csp.domains)
 
         # Propagação inicial
         if not ac3(self.csp, initial_domains):

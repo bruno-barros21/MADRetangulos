@@ -1,0 +1,40 @@
+Benchmark MAD 2025/2026 -- 20260511_1807
+
+
+============================================================
+Ficheiro: inst_small.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 3.0  tempo: 0.1ms  gap medio: +0.40
+  Greedy Por Grau                 guardas: 3.2  tempo: 0.0ms  gap medio: +0.60
+  Greedy Aleatorio x30            guardas: 2.6  tempo: 0.8ms  gap medio: +0.00
+  MAC + AC-3                      guardas: 2.6  tempo: 72.8ms  gap medio: +0.00
+  Programacao Dinamica            guardas: 3.0  tempo: 0.6ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 2.6  tempo: 120.2ms  gap medio: +0.00
+
+============================================================
+Ficheiro: inst_1d.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 6.6  tempo: 0.1ms  gap medio: +0.60
+  Greedy Por Grau                 guardas: 10.6  tempo: 0.0ms  gap medio: +4.60
+  Greedy Aleatorio x30            guardas: 6.0  tempo: 2.8ms  gap medio: +0.00
+  MAC + AC-3                      guardas: 5.0  tempo: 2382.4ms  gap medio: +0.00
+  Programacao Dinamica            guardas: 6.0  tempo: 0.1ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 6.0  tempo: 16.3ms  gap medio: +0.00
+
+============================================================
+Ficheiro: inst_grid.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 3.5  tempo: 0.0ms  gap medio: +0.00
+  Greedy Por Grau                 guardas: 5.7  tempo: 0.0ms  gap medio: +2.17
+  Greedy Aleatorio x30            guardas: 3.5  tempo: 1.6ms  gap medio: +0.00
+  MAC + AC-3                      guardas: 3.5  tempo: 184.9ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 3.5  tempo: 16.5ms  gap medio: +0.00
+
+============================================================
+Ficheiro: inst_original.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 3.8  tempo: 0.0ms  gap medio: +0.75
+  Greedy Por Grau                 guardas: 4.8  tempo: 0.0ms  gap medio: +1.75
+  Greedy Aleatorio x30            guardas: 3.0  tempo: 0.9ms  gap medio: +0.00
+  MAC + AC-3                      guardas: 3.0  tempo: 50.6ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 3.0  tempo: 18.2ms  gap medio: +0.00
