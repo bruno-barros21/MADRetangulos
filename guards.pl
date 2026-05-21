@@ -159,15 +159,15 @@ solve_file(Filename) :-
         nverts(NVerts),
         nl,
         format("Ficheiro: ~w~n", [Filename]),
-        format("Retângulos: ~w | Vértices: ~w~n",
-               [length(Rectangles,_), NVerts]),
+        length(Rectangles, NR),
+        format("Ret\u00e2ngulos: ~w | V\u00e9rtices: ~w~n", [NR, NVerts]),
         statistics(runtime, [T0|_]),
         solve(Rectangles, NVerts, Guards, Cost),
         statistics(runtime, [T1|_]),
         Elapsed is T1 - T0,
-        format("Custo óptimo: ~w guardas~n", [Cost]),
+        format("Custo \u00f3ptimo: ~w guardas~n", [Cost]),
         format("Tempo: ~w ms~n", [Elapsed]),
         print_guards(Guards, 0)
     ;
-        format("ERRO: ficheiro ~w não encontrado.~n", [Filename])
+        format("ERRO: ficheiro ~w n\u00e3o encontrado.~n", [Filename])
     ).

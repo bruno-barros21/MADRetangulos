@@ -256,27 +256,27 @@ def _find_swipl():
 def run_prolog(rectangles, instance_id, timeout_s=60):
     """
     Corre SWI-Prolog com CLP(FD) para resolver a instancia.
-
-    Se o SWI-Prolog nao estiver instalado, devolve (None, 0, 'nao_instalado').
-
-    Escreve um ficheiro .pl temporario, invoca swipl e le o resultado.
-    Devolve (n_guardas, tempo_ms, status).
+    Usa caminhos absolutos (obrigatório em Windows).
     """
     swipl = _find_swipl()
     if swipl is None:
         return None, 0.0, 'SWI-Prolog nao instalado'
 
-    # Exportar instancia para .pl temporario
     from Ortools import build_incidence as ot_build, export_to_prolog
-    all_verts, vid, rect_corners, _ = ot_build(rectangles)
-    n_verts = len(all_verts)
-    pl_file = f'_tmp_bench_{instance_id}.pl'
+    ot_build(rectangles)   # apenas para validar
+
+    # Caminhos absolutos — SWI-Prolog precisa de forward-slashes em Windows
+    script_dir   = os.path.dirname(os.path.abspath(__file__))
+    pl_file      = os.path.join(script_dir, f'_tmp_bench_{instance_id}.pl')
+    guards_pl    = os.path.join(script_dir, 'guards.pl')
+    pl_file_pl   = pl_file.replace('\\', '/')
+    guards_pl_pl = guards_pl.replace('\\', '/')
+
     export_to_prolog(rectangles, instance_id, filename=pl_file)
 
-    # Script Prolog inline que carrega a instancia e resolve
     goal = (
-        f"consult('{pl_file}'), "
-        f"consult('guards.pl'), "
+        f"consult('{pl_file_pl}'), "
+        f"consult('{guards_pl_pl}'), "
         f"findall(R, rect(R), Rects), "
         f"nverts(NV), "
         f"statistics(runtime,[T0|_]), "
@@ -293,23 +293,33 @@ def run_prolog(rectangles, instance_id, timeout_s=60):
         proc = subprocess.run(
             [swipl, '-q', '-g', goal],
             capture_output=True, text=True, timeout=timeout_s,
-            cwd=os.path.dirname(__file__) or '.'
+            cwd=script_dir
         )
         elapsed_ms = (time.perf_counter() - t0) * 1000
         output = proc.stdout
 
-        cost = None
+        cost  = None
         pl_ms = None
         for line in output.splitlines():
             if line.startswith('COST:'):
-                cost = int(line.split(':')[1])
+                try:
+                    cost = int(line.split(':')[1])
+                except ValueError:
+                    pass
             if line.startswith('TIME:'):
-                pl_ms = float(line.split(':')[1])
+                try:
+                    pl_ms = float(line.split(':')[1])
+                except ValueError:
+                    pass
 
         if pl_ms is None:
             pl_ms = elapsed_ms
 
-        status = 'ok' if cost is not None else f'erro: {proc.stderr[:80]}'
+        if cost is not None:
+            status = 'ok'
+        else:
+            err = proc.stderr[:120].replace('\n', ' ')
+            status = f'erro: {err}'
         return cost, pl_ms, status
 
     except subprocess.TimeoutExpired:
@@ -385,11 +395,18 @@ def run_benchmark(filename, run_mac_flag=True, run_prolog_flag=True,
             row['DP_ms']     = round(dp_ms, 3)
             row['DP_method'] = dp_method
             row['DP_optimo'] = dp_opt
-            opt_str = 'opt' if dp_opt else 'heur'
-            print(f'    {"DP":<20} {dp_n or "?":>4} guardas  {dp_ms:8.2f} ms  [{dp_method}/{opt_str}]')
+            if dp_n is None:
+                row['DP_status'] = 'timeout'
+            elif dp_opt:
+                row['DP_status'] = 'opt'
+            else:
+                row['DP_status'] = 'heur'
+            opt_str = row['DP_status']
+            print(f'    {"DP":<20} {dp_n or "timeout":>8} guardas  {dp_ms:8.2f} ms  [{dp_method}/{opt_str}]')
         except Exception as e:
             print(f'    ERRO DP: {e}')
             row['DP_n'] = row['DP_ms'] = row['DP_method'] = row['DP_optimo'] = None
+            row['DP_status'] = 'erro'
 
         # ── MAC + AC-3 (opcional -- lento para inst. grandes) ─
         if run_mac_flag and n_rects <= 20:
@@ -445,7 +462,7 @@ CSV_COLS = [
     'Greedy_Grau_n',   'Greedy_Grau_ms',   'Greedy_Grau_gap',
     'Greedy_Aleat_n',  'Greedy_Aleat_ms',  'Greedy_Aleat_gap',
     'MAC_n', 'MAC_ms', 'MAC_nodes', 'MAC_gap',
-    'DP_n',  'DP_ms',  'DP_method', 'DP_optimo', 'DP_gap',
+    'DP_n',  'DP_ms',  'DP_method', 'DP_optimo', 'DP_status', 'DP_gap',
     'ILP_n', 'ILP_ms',
     'CPSAT_n', 'CPSAT_ms', 'CPSAT_gap',
     'Prolog_n', 'Prolog_ms', 'Prolog_status',
@@ -551,20 +568,131 @@ def save_summary(rows, tag=''):
 #  MAIN
 # =============================================================
 
+# =============================================================
+#  BENCHMARK DE COBERTURA PARCIAL
+# =============================================================
+
+def run_partial_benchmark(filename, coverages=(70, 80),
+                          mac_timeout=30, dp_timeout=15):
+    """
+    Corre greedy + ILP em modo de cobertura parcial.
+    coverages: lista de percentagens de retangulos a cobrir.
+    Devolve lista de rows para CSV.
+    """
+    from greedy import (build_incidence as gi_build,
+                        greedy_max_coverage, greedy_by_degree,
+                        greedy_random_restarts)
+    from Ortools import build_incidence as ot_build, solve_ilp
+
+    instances = parse_file(filename)
+    basename  = os.path.basename(filename)
+    rows = []
+
+    print(f'\n{"="*62}')
+    print(f'  Cobertura Parcial: {basename}')
+    print(f'{"="*62}')
+
+    for pct in coverages:
+        for i, rectangles in enumerate(instances):
+            n_rects = len(rectangles)
+            n_target = max(1, int(n_rects * pct / 100))
+
+            # Escolhe os retangulos de menor grau (mais dificeis)
+            from collections import defaultdict
+            v2r_tmp = defaultdict(set)
+            r2v_tmp = {}
+            for r, vs in enumerate(rectangles):
+                r2v_tmp[r] = list(vs)
+                for v in vs:
+                    v2r_tmp[v].add(r)
+
+            rects_by_difficulty = sorted(
+                r2v_tmp.keys(),
+                key=lambda r: min(len(v2r_tmp[v]) for v in r2v_tmp[r])
+            )
+            target_rects = set(rects_by_difficulty[:n_target])
+
+            row = {
+                'ficheiro'  : basename,
+                'instancia' : i + 1,
+                'n_rects'   : n_rects,
+                'cobertura' : pct,
+                'n_target'  : n_target,
+            }
+
+            # Greedy
+            rects_list = [list(r2v_tmp[r]) for r in sorted(r2v_tmp)]
+            v2r_g, r2v_g = gi_build(rects_list)
+            tgt = set(target_rects)
+
+            t0 = time.perf_counter()
+            g1, _, _ = greedy_max_coverage(v2r_g, r2v_g, tgt)
+            row['Greedy_MaxCov_n'] = len(g1)
+            row['Greedy_MaxCov_ms'] = round((time.perf_counter()-t0)*1000, 3)
+
+            t0 = time.perf_counter()
+            g2, _, _ = greedy_by_degree(v2r_g, r2v_g, tgt)
+            row['Greedy_Grau_n'] = len(g2)
+            row['Greedy_Grau_ms'] = round((time.perf_counter()-t0)*1000, 3)
+
+            t0 = time.perf_counter()
+            g3, _, _ = greedy_random_restarts(v2r_g, r2v_g, tgt, n_restarts=30)
+            row['Greedy_Aleat_n'] = len(g3)
+            row['Greedy_Aleat_ms'] = round((time.perf_counter()-t0)*1000, 3)
+
+            # ILP parcial
+            all_verts, vid, rect_corners, _ = ot_build(rectangles)
+            target_list = [list(target_rects)]
+            t0 = time.perf_counter()
+            g_ilp, _ = solve_ilp(rect_corners, len(all_verts),
+                                  list(target_rects))
+            row['ILP_partial_n']  = len(g_ilp) if g_ilp else None
+            row['ILP_partial_ms'] = round((time.perf_counter()-t0)*1000, 3)
+
+            if g_ilp:
+                opt = len(g_ilp)
+                row['Greedy_MaxCov_gap'] = len(g1) - opt
+                row['Greedy_Grau_gap']   = len(g2) - opt
+                row['Greedy_Aleat_gap']  = len(g3) - opt
+
+            rows.append(row)
+            print(f'  Inst {i+1} ({pct}%) | target={n_target}/{n_rects} | '
+                  f'GMax={len(g1)} GGrau={len(g2)} GAleat={len(g3)} '
+                  f'ILP={len(g_ilp) if g_ilp else "?"}'
+            )
+
+    return rows
+
+
+CSV_COLS_PARTIAL = [
+    'ficheiro', 'instancia', 'n_rects', 'cobertura', 'n_target',
+    'ILP_partial_n', 'ILP_partial_ms',
+    'Greedy_MaxCov_n', 'Greedy_MaxCov_ms', 'Greedy_MaxCov_gap',
+    'Greedy_Grau_n',   'Greedy_Grau_ms',   'Greedy_Grau_gap',
+    'Greedy_Aleat_n',  'Greedy_Aleat_ms',  'Greedy_Aleat_gap',
+]
+
+
+# =============================================================
+#  MAIN
+# =============================================================
+
 DEFAULT_FILES = [
     'inst_small.txt',
     'inst_medium.txt',
     'inst_large.txt',
     'inst_1d.txt',
     'inst_grid.txt',
+    'inst_adversarial.txt',
     'inst_original.txt',
 ]
 
 if __name__ == '__main__':
     args = sys.argv[1:]
-    use_mac  = '--mac'  in args or '--all' in args
-    run_all  = '--all'  in args
-    no_mac   = '--no-mac' in args
+    use_mac  = '--mac'     in args or '--all' in args
+    run_all  = '--all'     in args
+    no_mac   = '--no-mac'  in args
+    do_part  = '--partial' in args
 
     # Determinar ficheiros a processar
     files_to_run = [a for a in args
@@ -585,6 +713,7 @@ if __name__ == '__main__':
     print(f'\nFicheiros a processar: {files_to_run}')
     print(f'MAC+AC-3: {"SIM (ate 20 rect)" if use_mac else "NAO"}')
     print(f'Prolog:   auto-detectado')
+    print(f'Parcial:  {"SIM (70%%, 80%%)" if do_part else "NAO (use --partial)"}')
 
     all_rows = []
     for fpath in files_to_run:
@@ -595,8 +724,29 @@ if __name__ == '__main__':
                              dp_timeout=20)
         all_rows.extend(rows)
 
-    # Guardar resultados
+    # Guardar resultados principais
     print_summary_table(all_rows)
     save_csv(all_rows)
     save_summary(all_rows)
+
+    # Cobertura parcial (opcional)
+    if do_part:
+        partial_rows = []
+        for fpath in [f for f in files_to_run
+                      if 'large' not in f]:   # large demora muito
+            partial_rows.extend(
+                run_partial_benchmark(fpath, coverages=(70, 80))
+            )
+        if partial_rows:
+            date_str = datetime.now().strftime('%Y%m%d_%H%M')
+            pfname = os.path.join(RESULTS_DIR,
+                                  f'partial_{date_str}.csv')
+            with open(pfname, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(
+                    f, fieldnames=CSV_COLS_PARTIAL, extrasaction='ignore')
+                writer.writeheader()
+                for row in partial_rows:
+                    writer.writerow({k: row.get(k, '') for k in CSV_COLS_PARTIAL})
+            print(f'\n  Parcial CSV: {pfname}')
+
     print('\nBenchmark concluido!')

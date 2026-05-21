@@ -1,0 +1,30 @@
+ficheiro,instancia,n_rects,n_verts,opt_ILP,Greedy_MaxCov_n,Greedy_MaxCov_ms,Greedy_MaxCov_gap,Greedy_Grau_n,Greedy_Grau_ms,Greedy_Grau_gap,Greedy_Aleat_n,Greedy_Aleat_ms,Greedy_Aleat_gap,MAC_n,MAC_ms,MAC_nodes,MAC_gap,DP_n,DP_ms,DP_method,DP_optimo,DP_status,DP_gap,ILP_n,ILP_ms,CPSAT_n,CPSAT_ms,CPSAT_gap,Prolog_n,Prolog_ms,Prolog_status
+inst_small.txt,1,6,12,2,2,0.017,0,2,0.009,0,2,0.298,0,,,,,,0.249,DP-COL (profile),True,timeout,,2,40.089,2,458.213,0,2,15.0,ok
+inst_small.txt,2,6,12,2,2,0.014,0,2,0.008,0,2,0.31,0,,,,,,0.21,DP-COL (profile),True,timeout,,2,5.359,2,8.035,0,2,,ok
+inst_small.txt,3,8,15,2,3,0.019,1,3,0.008,1,2,0.49,0,,,,,,0.258,DP-COL (profile),True,timeout,,2,6.865,2,5.416,0,2,,ok
+inst_small.txt,4,8,15,2,3,0.02,1,3,0.008,1,2,0.465,0,,,,,,0.293,DP-COL (profile),True,timeout,,2,5.248,2,22.228,0,2,,ok
+inst_small.txt,5,6,12,2,2,0.014,0,2,0.007,0,2,0.301,0,,,,,,0.247,DP-ROW (profile),True,timeout,,2,5.162,2,7.947,0,2,,ok
+inst_small.txt,6,6,14,3,4,0.023,1,5,0.01,2,3,0.561,0,,,,,3,0.036,DP-1D (exacta),True,opt,0,3,5.817,3,7.222,0,3,,ok
+inst_small.txt,7,9,16,4,4,0.021,0,4,0.008,0,4,0.687,0,,,,,,0.592,DP-ROW (profile),True,timeout,,4,5.621,4,7.048,0,4,,ok
+inst_small.txt,8,9,16,4,4,0.022,0,4,0.008,0,4,0.638,0,,,,,,0.551,DP-ROW (profile),True,timeout,,4,6.065,4,6.314,0,4,,ok
+inst_small.txt,9,8,15,2,3,0.019,1,3,0.008,1,2,0.443,0,,,,,,0.26,DP-ROW (profile),True,timeout,,2,5.83,2,6.834,0,2,,ok
+inst_small.txt,10,10,18,3,3,0.025,0,4,0.013,1,3,0.673,0,,,,,,0.301,DP-ROW (profile),True,timeout,,3,5.63,3,6.727,0,3,,ok
+inst_1d.txt,1,5,12,3,3,0.015,0,4,0.008,1,3,0.403,0,,,,,3,0.03,DP-1D (exacta),True,opt,0,3,5.29,3,6.821,0,3,15.0,ok
+inst_1d.txt,2,8,18,4,5,0.025,1,7,0.01,3,4,0.844,0,,,,,4,0.028,DP-1D (exacta),True,opt,0,4,6.048,4,6.807,0,4,,ok
+inst_1d.txt,3,10,22,5,6,0.046,1,9,0.015,4,5,1.34,0,,,,,5,0.03,DP-1D (exacta),True,opt,0,5,6.891,5,20.047,0,5,15.0,ok
+inst_1d.txt,4,15,32,8,8,0.056,0,14,0.015,6,8,2.416,0,,,,,8,0.029,DP-1D (exacta),True,opt,0,8,7.856,8,19.179,0,8,3110.0,ok
+inst_1d.txt,5,20,42,10,11,0.11,1,19,0.02,9,10,4.44,0,,,,,10,0.046,DP-1D (exacta),True,opt,0,10,9.684,10,14.195,0,,60000,timeout
+inst_grid.txt,1,4,9,1,1,0.009,0,1,0.006,0,1,0.157,0,,,,,,0.176,DP-ROW (profile),True,timeout,,1,5.533,1,7.213,0,1,,ok
+inst_grid.txt,2,6,12,2,2,0.02,0,2,0.011,0,2,0.319,0,,,,,,0.224,DP-COL (profile),True,timeout,,2,5.358,2,7.073,0,2,,ok
+inst_grid.txt,3,9,16,4,4,0.053,0,4,0.017,0,4,0.903,0,,,,,,0.557,DP-ROW (profile),True,timeout,,4,6.047,4,5.475,0,4,16.0,ok
+inst_grid.txt,4,12,20,4,4,0.047,0,6,0.015,2,4,1.486,0,,,,,,1.502,DP-COL (profile),True,timeout,,4,9.413,4,17.165,0,4,16.0,ok
+inst_grid.txt,5,16,25,4,4,0.061,0,9,0.019,5,4,2.148,0,,,,,,3.457,DP-ROW (profile),True,timeout,,4,5.856,4,5.5,0,4,,ok
+inst_grid.txt,6,20,30,6,6,0.052,0,12,0.014,6,6,2.026,0,,,,,,4.049,DP-ROW (profile),True,timeout,,6,5.975,6,20.797,0,6,188.0,ok
+inst_adversarial.txt,1,6,14,3,3,0.022,0,5,0.012,2,3,0.807,0,,,,,,0.255,DP-COL (profile),True,timeout,,3,6.545,3,20.836,0,3,,ok
+inst_adversarial.txt,2,8,18,4,4,0.032,0,7,0.01,3,4,0.805,0,,,,,,0.341,DP-COL (profile),True,timeout,,4,5.876,4,21.931,0,4,,ok
+inst_adversarial.txt,3,10,22,5,5,0.057,0,9,0.023,4,5,1.722,0,,,,,,0.518,DP-COL (profile),True,timeout,,5,8.893,5,17.208,0,5,47.0,ok
+inst_adversarial.txt,4,12,26,6,6,0.077,0,11,0.016,5,6,1.889,0,,,,,,0.666,DP-COL (profile),True,timeout,,6,7.268,6,20.4,0,6,172.0,ok
+inst_adversarial.txt,5,9,16,4,4,0.029,0,4,0.013,0,4,0.972,0,,,,,,1.053,DP-ROW (profile),True,timeout,,4,5.391,4,5.122,0,4,16.0,ok
+inst_adversarial.txt,6,16,25,4,4,0.037,0,9,0.012,5,4,1.397,0,,,,,,2.897,DP-ROW (profile),True,timeout,,4,5.668,4,5.877,0,4,,ok
+inst_adversarial.txt,7,25,36,9,9,0.123,0,16,0.025,7,9,4.347,0,skip,skip,skip,,,16.917,DP-ROW (profile),True,timeout,,9,8.115,9,16.889,0,,,skip (n>20)
+inst_adversarial.txt,8,36,49,9,12,0.158,3,25,0.034,16,10,6.894,1,skip,skip,skip,,,60.89,DP-ROW (profile),True,timeout,,9,10.057,9,9.996,0,,,skip (n>20)

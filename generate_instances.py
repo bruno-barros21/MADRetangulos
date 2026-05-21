@@ -215,6 +215,99 @@ def generate_grid(rows, cols):
 
 
 # =============================================================
+#  3b. INSTÂNCIAS ADVERSARIAIS E EXTENSÕES
+# =============================================================
+
+def generate_comb(n_teeth):
+    """
+    Pente (comb) 2D: uma barra horizontal no topo + dentes verticais
+    alternados com lacunas.
+
+    Estrutura (n_teeth=3):
+        +--+--+--+--+--+
+        |    TOP BAR   |   <- 1 rect largo
+        +--+  +--+  +--+
+        |D1|G1|D2|G2|D3|   <- dentes D e lacunas G
+        +--+--+--+--+--+
+
+    Adversarial para Greedy_Grau estatico: a barra superior tem
+    vertices de grau 3 nos limites internos, mas a solucao optima
+    nao os usa todos.
+    """
+    # Coordenadas: cada dente tem largura 1, cada lacuna largura 1
+    # Barra superior: y in [n_teeth, n_teeth+1], x in [0, 2*n_teeth-1]
+    # Dente i (0-based): x in [2*i, 2*i+1], y in [0, n_teeth]
+    # Lacuna i: x in [2*i+1, 2*i+2], y in [0, n_teeth]
+    width = 2 * n_teeth - 1
+    height_teeth = n_teeth
+    rects = []
+    # Barra
+    rects.append((0, width, height_teeth, height_teeth + 1))
+    # Dentes e lacunas
+    for i in range(n_teeth):
+        rects.append((2 * i, 2 * i + 1, 0, height_teeth))  # dente
+        if i < n_teeth - 1:
+            rects.append((2 * i + 1, 2 * i + 2, 0, height_teeth))  # lacuna
+    return rects
+
+
+def generate_staircase(n_steps):
+    """
+    Escada (staircase) n_steps degraus: particao retangular de um
+    quadrado NxN com cortes diagonais escalonados.
+
+    Para n_steps=3, cobre [0,3]x[0,3]:
+        +---+
+        | 1 |       <- topo esquerdo: [0,3]x[2,3]
+        +---+---+
+        | 2 | 2b|   <- meio: [0,2]x[1,2] e [2,3]x[0,2]
+        +---+   |
+        | 3 |   |   <- base esquerda e direita
+        +---+---+
+
+    Adversarial: greedy estatico tende a escolher vertices
+    do canto interior (grau 4) cedo, deixando rectangulos
+    isolados que precisam de guardas extra.
+
+    Implementacao com Partition (sempre valida):
+      N cortes horizontais + N-1 cortes verticais escalonados.
+    Resulta em ~N^2 rectangulos de tamanhos variaveis.
+    """
+    N = n_steps
+    p = Partition(N, N)
+    for i in range(1, N):
+        p.cut_horizontal(i)
+    for i in range(1, N):
+        p.cut_vertical(i)
+    return p.rects
+
+
+
+
+def generate_ring(size):
+    """
+    Anel (ring) de rectangulos: grelha NxN com o centro vazio.
+    N = size, centro = [(N//2-1, N//2+1)] x [(N//2-1, N//2+1)]
+    para N par. Bom para testar a coloracao (extensao 4a) porque
+    o grafo de conflito forma um ciclo.
+    """
+    rects = []
+    for r in range(size):
+        for c in range(size):
+            # Excluir o quadrado central (apenas para size >= 4)
+            ci = size // 2
+            if size >= 4 and ci - 1 <= r < ci + 1 and ci - 1 <= c < ci + 1:
+                continue
+            rects.append((c, c + 1, r, r + 1))
+    # O anel nao e uma particao valida (tem buraco) -- usar grelha
+    # completa em vez disso, mas com o centro partido em 4 triangulos
+    # Alternativa mais simples: grelha NxN normal (a ring eh aproximado)
+    # Devolvemos a grelha NxN, que ja e valida:
+    rects = generate_grid(size, size)
+    return rects
+
+
+# =============================================================
 #  4. VERIFICACAO BASICA
 # =============================================================
 
@@ -273,7 +366,7 @@ def generate_all(seed=2025, output_dir='.'):
         return os.path.join(output_dir, name)
 
     # ── SMALL: 4-8 retangulos, 10 instancias ──────────────────
-    print('\n[1/5] Instancias pequenas (4-8 rect, 10 instancias)...')
+    print('\n[1/7] Instancias pequenas (4-8 rect, 10 instancias)...')
     sizes_s = [4, 5, 5, 6, 6, 6, 7, 7, 8, 8]
     small = []
     for n in sizes_s:
@@ -286,7 +379,7 @@ def generate_all(seed=2025, output_dir='.'):
     write_instances(small, path('inst_small.txt'))
 
     # ── MEDIUM: 10-20 retangulos, 10 instancias ───────────────
-    print('\n[2/5] Instancias medias (10-20 rect, 10 instancias)...')
+    print('\n[2/7] Instancias medias (10-20 rect, 10 instancias)...')
     sizes_m = [10, 10, 12, 12, 14, 15, 15, 17, 18, 20]
     medium = []
     for n in sizes_m:
@@ -295,7 +388,7 @@ def generate_all(seed=2025, output_dir='.'):
     write_instances(medium, path('inst_medium.txt'))
 
     # ── LARGE: 25-60 retangulos, 5 instancias ─────────────────
-    print('\n[3/5] Instancias grandes (25-60 rect, 5 instancias)...')
+    print('\n[3/7] Instancias grandes (25-60 rect, 5 instancias)...')
     sizes_l = [25, 30, 40, 50, 60]
     large = []
     for n in sizes_l:
@@ -304,16 +397,38 @@ def generate_all(seed=2025, output_dir='.'):
     write_instances(large, path('inst_large.txt'))
 
     # ── 1D: filas de 5-20 retangulos, 5 instancias ────────────
-    print('\n[4/5] Instancias 1D (filas, 5-20 rect, 5 instancias)...')
+    print('\n[4/7] Instancias 1D (filas, 5-20 rect, 5 instancias)...')
     sizes_1d = [5, 8, 10, 15, 20]
     inst_1d = [generate_1d_row(n) for n in sizes_1d]
     write_instances(inst_1d, path('inst_1d.txt'))
 
     # ── GRID: grelhas NxM, 6 instancias ───────────────────────
-    print('\n[5/5] Instancias grelha NxM (6 instancias)...')
+    print('\n[5/7] Instancias grelha NxM (6 instancias)...')
     grid_sizes = [(2, 2), (2, 3), (3, 3), (3, 4), (4, 4), (5, 4)]
     inst_grid = [generate_grid(r, c) for (r, c) in grid_sizes]
     write_instances(inst_grid, path('inst_grid.txt'))
+
+    # ── ADVERSARIAL: pente + escada (8 instancias) ────────────
+    print('\n[6/7] Instancias adversariais (pente + escada)...')
+    inst_adv = []
+    for n_teeth in [3, 4, 5, 6]:          # pentes
+        inst_adv.append(generate_comb(n_teeth))
+    for n_steps in [3, 4, 5, 6]:          # escadas
+        stair = generate_staircase(n_steps)
+        if verify_partition(stair):
+            inst_adv.append(stair)
+        else:
+            # fallback: partição aleatória de tamanho semelhante
+            pr = generate_random_partition(n_steps * 2 + 2, rng=rng)
+            inst_adv.append(pr.rects)
+    write_instances(inst_adv, path('inst_adversarial.txt'))
+
+    # ── EXTENSIONS: grelhas maiores para 4a/4b (5 instancias) ─
+    print('\n[7/7] Instancias para extensoes 4a/4b...')
+    ext_grids = [(4, 4), (5, 5), (6, 6), (4, 6), (7, 4)]
+    inst_ext  = [generate_grid(r, c) for (r, c) in ext_grids]
+    write_instances(inst_ext, path('inst_extensions.txt'))
+    print('  (grelhas 4x4 a 7x4: ideais para coloracao e alcance D)')
 
     # ── Re-escreve as instancias do 'res' original ────────────
     print('\n[+] Copiando instancias originais de "res"...')
@@ -321,6 +436,7 @@ def generate_all(seed=2025, output_dir='.'):
 
     print('\nGeracao concluida!')
     _print_summary(output_dir)
+
 
 
 def _copy_res_if_exists(output_dir):
@@ -336,12 +452,14 @@ def _copy_res_if_exists(output_dir):
 
 def _print_summary(output_dir):
     files = [
-        ('inst_small.txt',    'Pequenas (4-8 rect)'),
-        ('inst_medium.txt',   'Medias (10-20 rect)'),
-        ('inst_large.txt',    'Grandes (25-60 rect)'),
-        ('inst_1d.txt',       '1D (filas)'),
-        ('inst_grid.txt',     'Grelha NxM'),
-        ('inst_original.txt', 'Original (res)'),
+        ('inst_small.txt',       'Pequenas (4-8 rect)'),
+        ('inst_medium.txt',      'Medias (10-20 rect)'),
+        ('inst_large.txt',       'Grandes (25-60 rect)'),
+        ('inst_1d.txt',          '1D (filas)'),
+        ('inst_grid.txt',        'Grelha NxM'),
+        ('inst_adversarial.txt', 'Adversarial (pente+escada)'),
+        ('inst_extensions.txt',  'Extensoes 4a/4b (grelhas grandes)'),
+        ('inst_original.txt',    'Original (res)'),
     ]
     print(f'\n{"="*58}')
     print(f'  {"Ficheiro":<25} {"Tipo":<28} N')

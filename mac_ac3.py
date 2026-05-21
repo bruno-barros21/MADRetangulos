@@ -19,6 +19,7 @@ Uso:
 import sys
 import time
 import copy
+import math
 from collections import deque
 
 
@@ -317,22 +318,42 @@ class Solver:
 
     def _lower_bound(self, domains, assigned):
         """
-        Bound inferior: conta restrições onde nenhum canto tem 1
-        no domínio e não estão ainda satisfeitas.
-        Cada uma precisa de pelo menos 1 guarda adicional.
+        Bound fraccional: ceil(|restrições não satisfeitas| / cobertura_máx).
+
+        Para cada restrição não satisfeita, conta as variáveis livres
+        que a podem satisfazer. O bound = ceil(n_unsat / max_coverage)
+        onde max_coverage é o máximo de restrições que qualquer variável
+        livre pode satisfazer de uma só vez.
         """
-        unsat = set()
-        for cid, corners in enumerate(self.csp.constraints):
-            satisfied = any(domains[vi] == {1} or
-                            (vi in assigned and assigned[vi] == 1)
-                            for vi in corners)
-            if not satisfied:
-                # A restrição precisa de pelo menos um dos seus cantos
-                # Contribui 1 para o lower bound dividido pelo grau máximo
-                unsat.add(cid)
-        # Bound simples: pelo menos 1 guarda por restrição insatisfeita
-        # (loose mas rápido)
-        return 0   # bound trivial; substituível por LP relaxation
+        unsat_free = []  # para cada restrição não sat., conjunto de vars livres
+        for corners in self.csp.constraints:
+            # Satisfeita se algum canto tem valor 1 (forçado ou atribuído)
+            if any(domains[vi] == {1} for vi in corners):
+                continue
+            # Inviável se nenhum canto pode ser 1
+            free = [vi for vi in corners if 1 in domains[vi]]
+            if not free:
+                return math.inf   # inconsistência detectada
+            unsat_free.append(set(free))
+
+        if not unsat_free:
+            return 0
+
+        # Cobertura máxima de qualquer variável livre
+        all_free = set()
+        for s in unsat_free:
+            all_free |= s
+        if not all_free:
+            return len(unsat_free)
+
+        max_cov = max(
+            sum(1 for s in unsat_free if vi in s)
+            for vi in all_free
+        )
+        if max_cov == 0:
+            return len(unsat_free)
+
+        return math.ceil(len(unsat_free) / max_cov)
 
 
 # =============================================================

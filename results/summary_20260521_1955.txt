@@ -1,0 +1,36 @@
+Benchmark MAD 2025/2026 -- 20260521_1955
+
+
+============================================================
+Ficheiro: inst_small.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 3.0  tempo: 0.0ms  gap medio: +0.40
+  Greedy Por Grau                 guardas: 3.2  tempo: 0.0ms  gap medio: +0.60
+  Greedy Aleatorio x30            guardas: 2.6  tempo: 0.5ms  gap medio: +0.00
+  Programacao Dinamica            guardas: 3.0  tempo: 0.3ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 2.6  tempo: 53.6ms  gap medio: +0.00
+
+============================================================
+Ficheiro: inst_1d.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 6.6  tempo: 0.1ms  gap medio: +0.60
+  Greedy Por Grau                 guardas: 10.6  tempo: 0.0ms  gap medio: +4.60
+  Greedy Aleatorio x30            guardas: 6.0  tempo: 1.9ms  gap medio: +0.00
+  Programacao Dinamica            guardas: 6.0  tempo: 0.0ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 6.0  tempo: 13.4ms  gap medio: +0.00
+
+============================================================
+Ficheiro: inst_grid.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 3.5  tempo: 0.0ms  gap medio: +0.00
+  Greedy Por Grau                 guardas: 5.7  tempo: 0.0ms  gap medio: +2.17
+  Greedy Aleatorio x30            guardas: 3.5  tempo: 1.2ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 3.5  tempo: 10.5ms  gap medio: +0.00
+
+============================================================
+Ficheiro: inst_adversarial.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 5.9  tempo: 0.1ms  gap medio: +0.38
+  Greedy Por Grau                 guardas: 10.8  tempo: 0.0ms  gap medio: +5.25
+  Greedy Aleatorio x30            guardas: 5.6  tempo: 2.4ms  gap medio: +0.12
+  CP-SAT (OR-Tools)               guardas: 5.5  tempo: 14.8ms  gap medio: +0.00

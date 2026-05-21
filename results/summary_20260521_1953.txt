@@ -1,0 +1,11 @@
+Benchmark MAD 2025/2026 -- 20260521_1953
+
+
+============================================================
+Ficheiro: inst_medium.txt
+============================================================
+  Greedy Cobertura Maxima         guardas: 5.2  tempo: 0.0ms  gap medio: +0.30
+  Greedy Por Grau                 guardas: 8.2  tempo: 0.0ms  gap medio: +3.30
+  Greedy Aleatorio x30            guardas: 4.9  tempo: 1.7ms  gap medio: +0.00
+  MAC + AC-3                      guardas: 4.6  tempo: 42.1ms  gap medio: +0.00
+  CP-SAT (OR-Tools)               guardas: 4.9  tempo: 58.2ms  gap medio: +0.00
