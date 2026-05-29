@@ -678,13 +678,13 @@ CSV_COLS_PARTIAL = [
 # =============================================================
 
 DEFAULT_FILES = [
-    'inst_small.txt',
-    'inst_medium.txt',
-    'inst_large.txt',
-    'inst_1d.txt',
-    'inst_grid.txt',
-    'inst_adversarial.txt',
-    'inst_original.txt',
+    '../casos_de_teste/inst_small.txt',
+    '../casos_de_teste/inst_medium.txt',
+    '../casos_de_teste/inst_large.txt',
+    '../casos_de_teste/inst_1d.txt',
+    '../casos_de_teste/inst_grid.txt',
+    '../casos_de_teste/inst_adversarial.txt',
+    '../casos_de_teste/inst_original.txt',
 ]
 
 if __name__ == '__main__':

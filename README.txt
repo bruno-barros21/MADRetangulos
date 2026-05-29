@@ -1,49 +1,49 @@
-rectParts.c
+# Projeto: Vigilância de Partições Retangulares
 
-   * cria partições retangulares com nr retângulos
+Este projeto foi organizado de acordo com as diretrizes solicitadas:
 
-   * permite gerar várias instâncias com nr retângulos
-    (sendo o número de instâncias definido no input)
+## Estrutura do Diretório
 
-   * depende de types.h e macros.h
+* Os ficheiros PDF correspondentes ao relatório encontram-se na raiz do projeto (ex: `3.pdf`, etc.).
+* `programas/`: Diretório contendo todo o código-fonte desenvolvido (Python, C, Prolog, etc.).
+* `casos_de_teste/`: Diretório contendo as instâncias de teste geradas e utilizadas.
+* `README.txt`: Ficheiro atual, contendo as instruções de compilação e execução.
 
-   * compilar
-       gcc rectParts.c
+---
 
-   * executar
+## Procedimentos para Execução dos Programas
 
-    ./a.out res resFigs.tex
+De modo a garantir que os caminhos para as instâncias de teste e resultados estão corretos, abra o terminal e navegue para dentro da pasta dos programas antes de executar os scripts:
 
-    produz um ficheiro res com os exemplos e resFigs.tex com figuras para LaTeX
-    (resFigs.tex opcional)
-    
-    Para ver as figuras, executar
-    
-    pdflatex resFigs.tex
-    
-    que produzirá um ficheiro resFigs.pdf com as figuras
+    cd programas
 
-  * diferentes opções de compilação
-  
-    definidas por constantes PICTSTEPBYSTEP, FACELABELS, e SHOWCOORDS
-    e ainda UNIFORM e GEOMETRIC  (preferencialmente, deve estar GEOMETRIC ativa)
+### 1. Benchmark Principal (Python)
+Este script testa os algoritmos em todas as instâncias predefinidas e guarda os resultados em ficheiros CSV e de texto na subpasta `programas/results/`.
 
+Para executar com todas as instâncias por omissão (os ficheiros localizados em `casos_de_teste/`):
+    python benchmark.py
 
-//-------------   Options for compilation -----------------------
-// --- output image
-//#define PICTSTEPBYSTEP
-//---  output LaTeX pictures
+Para executar com um ficheiro de teste específico:
+    python benchmark.py ../casos_de_teste/inst_small.txt
 
-#define FACELABELS
-//-- label faces from 1 to nr
-//#define SHOWCOORDS
-//-- show coordinates of the vertices
+Para incluir o algoritmo MAC+AC-3 (lento em instâncias maiores):
+    python benchmark.py ../casos_de_teste/inst_small.txt --mac
 
-//uniform or geometric distribution for random choices
-//#define UNIFORM
-//  (maybe not very interesting)
+### 2. Gerador de Instâncias (Python)
+Para regerar os ficheiros de instâncias e guardá-los automaticamente na diretoria `casos_de_teste/`:
+    python generate_instances.py
 
-#define GEOMETRIC
-//#define Tau 0.7
-#define Tau 0.75
-//----------------------------------------------------
+Para ver o modo de demonstração (que imprime na consola sem gravar):
+    python generate_instances.py --demo
+
+### 3. Gerador de Partições em C (rectParts.c)
+Se pretender compilar o gerador/visualizador original desenvolvido em C:
+    gcc rectParts.c -o a.exe
+
+Para o executar, passando o nome dos ficheiros de saída (por exemplo, criando ficheiros locais na pasta programas):
+    ./a.exe res resFigs.tex
+
+(O executável produz um ficheiro com os exemplos e, opcionalmente, um ficheiro `.tex` com figuras para LaTeX. Pode depois usar `pdflatex resFigs.tex` para ver as figuras num PDF.)
+
+### 4. Resolução CLP(FD) via Prolog
+O benchmark já invoca o Prolog automaticamente usando a biblioteca de subprocessos (desde que o `swipl` esteja instalado e no PATH do sistema). No entanto, pode também executar o Prolog isoladamente se pretender interagir diretamente com os ficheiros `.pl`.

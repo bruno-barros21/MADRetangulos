@@ -511,4 +511,4 @@ if __name__ == '__main__':
     if '--demo' in sys.argv:
         demo()
     else:
-        generate_all(seed=2025)
+        generate_all(seed=2025, output_dir='../casos_de_teste')
